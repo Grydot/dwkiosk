@@ -16,6 +16,9 @@ if ! id "$KIOSK_USER" &>/dev/null; then
     sudo usermod -aG sudo "$KIOSK_USER"
 fi
 
+# Remove kiosk from sudoers
+sudo gpasswd -d $KIOSK_USER sudo || true
+
 ### 2. Setup autologin override (dynamic user) ###
 sudo mkdir -p /etc/systemd/system/getty@tty1.service.d
 sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf > /dev/null <<EOF
@@ -27,8 +30,7 @@ sudo systemctl daemon-reexec
 
 ### 3. Install dependencies ###
 sudo apt-get update
-sudo apt-get install -y i3 xorg x11-xserver-utils xterm feh curl wget \
-    libxcomposite1 libxrandr2 libxkbcommon-x11-0
+sudo apt-get install -y i3 xorg x11-xserver-utils xterm feh curl wget libxcomposite1 libxrandr2 libxkbcommon-x11-0 libatomic1
 
 ### 4. Install DW Spectrum ###
 wget -O /tmp/dwspectrum.deb "$DW_DEB"
