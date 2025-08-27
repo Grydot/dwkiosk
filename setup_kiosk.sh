@@ -38,7 +38,7 @@ sudo dpkg -i /tmp/dwspectrum.deb || sudo apt-get install -f -y
 LATEST_DIR=$(ls -dt /opt/digitalwatchdog/client/*/ | head -1)
 
 # Point "latest" symlink to it
-sudo ln -sfn "${LATEST_DIR}bin/applauncher" /opt/digitalwatchdog/client/latest
+sudo ln -sfn "${LATEST_DIR}bin/applauncher-bin" /opt/digitalwatchdog/client/latest
 
 # Global launcher in /bin
 sudo ln -sfn /opt/digitalwatchdog/client/latest /bin/dwspectrum
