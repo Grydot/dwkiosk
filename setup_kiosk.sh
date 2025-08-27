@@ -23,7 +23,6 @@ sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf > /dev/null <<EO
 ExecStart=
 ExecStart=-/sbin/agetty --autologin $KIOSK_USER --noclear %I \$TERM
 EOF
-
 sudo systemctl daemon-reexec
 
 ### 3. Install dependencies ###
@@ -56,8 +55,27 @@ sudo wget -O /etc/i3/config "$REPO_BASE/i3/config"
 ### 7. Download .bashrc and .xinitrc from repo ###
 wget -O /home/$KIOSK_USER/.bashrc "$REPO_BASE/.bashrc"
 wget -O /home/$KIOSK_USER/.xinitrc "$REPO_BASE/.xinitrc"
-chmod +x /home/$KIOSK_USER/.xinitrc
-chown $KIOSK_USER:$KIOSK_USER /home/$KIOSK_USER/.bashrc /home/$KIOSK_USER/.xinitrc
+
+### 7b. Ensure autostart of X in .bashrc ###
+BASHRC="/home/$KIOSK_USER/.bashrc"
+if ! grep -q "exec startx" "$BASHRC"; then
+cat >> "$BASHRC" <<'EOF'
+
+# Auto-start X on tty1
+if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+    exec startx
+fi
+EOF
+fi
+
+### 7c. Ensure .xinitrc launches i3 ###
+XINITRC="/home/$KIOSK_USER/.xinitrc"
+if ! grep -q "exec i3" "$XINITRC" 2>/dev/null; then
+    echo 'exec i3' >> "$XINITRC"
+fi
+
+chmod +x "$XINITRC"
+chown $KIOSK_USER:$KIOSK_USER "$BASHRC" "$XINITRC"
 
 ### 8. Deploy background.png from repo ###
 sudo mkdir -p /opt/dwkiosk
