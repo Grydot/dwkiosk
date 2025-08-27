@@ -5,7 +5,7 @@ set -e
 KIOSK_USER="kiosk"
 RUSTDESK_PASS="MySecretPassword"
 REPO_BASE="https://raw.githubusercontent.com/Grydot/dwkiosk/main"
-DW_DEB="https://updates.digital-watchdog.com/digitalwatchdog/40736/linux/dwspectrum-client-6.0.3.40736-linux_x64.deb"
+DW_DEB="https://updates.digitalwatchdog.com/digitalwatchdog/40736/linux/dwspectrum-client-6.0.3.40736-linux_x64.deb"
 RUSTDESK_DEB="https://github.com/rustdesk/rustdesk/releases/download/1.4.1/rustdesk-1.4.1-x86_64.deb"
 
 echo "Starting Kiosk Setup..."
@@ -52,14 +52,10 @@ sudo systemctl enable rustdesk
 sudo mkdir -p /etc/i3
 sudo wget -O /etc/i3/config "$REPO_BASE/i3/config"
 
-### 7. Download .bashrc and .xinitrc from repo ###
-wget -O /home/$KIOSK_USER/.bashrc "$REPO_BASE/.bashrc"
-wget -O /home/$KIOSK_USER/.xinitrc "$REPO_BASE/.xinitrc"
-
-### 7b. Ensure autostart of X in .bashrc ###
+### 7. Ensure autostart of X in .bashrc ###
 BASHRC="/home/$KIOSK_USER/.bashrc"
 if ! grep -q "exec startx" "$BASHRC"; then
-cat >> "$BASHRC" <<'EOF'
+    sudo tee -a "$BASHRC" > /dev/null <<'EOF'
 
 # Auto-start X on tty1
 if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
@@ -68,20 +64,23 @@ fi
 EOF
 fi
 
-### 7c. Ensure .xinitrc launches i3 ###
+### 8. Ensure .xinitrc launches i3 ###
 XINITRC="/home/$KIOSK_USER/.xinitrc"
 if ! grep -q "exec i3" "$XINITRC" 2>/dev/null; then
-    echo 'exec i3' >> "$XINITRC"
+    sudo tee -a "$XINITRC" > /dev/null <<'EOF'
+exec i3
+EOF
 fi
 
-chmod +x "$XINITRC"
-chown $KIOSK_USER:$KIOSK_USER "$BASHRC" "$XINITRC"
+# Fix ownership and permissions
+sudo chown $KIOSK_USER:$KIOSK_USER "$BASHRC" "$XINITRC"
+sudo chmod +x "$XINITRC"
 
-### 8. Deploy background.png from repo ###
+### 9. Deploy background.png from repo ###
 sudo mkdir -p /opt/dwkiosk
 sudo wget -O /opt/dwkiosk/background.png "$REPO_BASE/background.png"
 
-### 9. Show RustDesk ID ###
+### 10. Show RustDesk ID ###
 echo " "
 echo "Fetching RustDesk ID..."
 sleep 2
@@ -91,7 +90,7 @@ else
     RUSTDESK_ID="(RustDesk not installed)"
 fi
 
-### 10. Final message ###
+### 11. Final message ###
 echo "Setup complete!"
 echo "RustDesk ID: $RUSTDESK_ID"
 echo "RustDesk Password: $RUSTDESK_PASS"
