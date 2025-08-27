@@ -54,7 +54,7 @@ sudo wget -O /etc/i3/config "$REPO_BASE/i3/config"
 
 ### 7. Ensure autostart of X in .bashrc ###
 BASHRC="/home/$KIOSK_USER/.bashrc"
-if ! grep -q "exec startx" "$BASHRC"; then
+if ! sudo grep -q "exec startx" "$BASHRC"; then
     sudo tee -a "$BASHRC" > /dev/null <<'EOF'
 
 # Auto-start X on tty1
@@ -66,7 +66,7 @@ fi
 
 ### 8. Ensure .xinitrc launches i3 ###
 XINITRC="/home/$KIOSK_USER/.xinitrc"
-if ! grep -q "exec i3" "$XINITRC" 2>/dev/null; then
+if ! sudo grep -q "exec i3" "$XINITRC" 2>/dev/null; then
     sudo tee -a "$XINITRC" > /dev/null <<'EOF'
 exec i3
 EOF
