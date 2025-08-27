@@ -7,6 +7,7 @@ Must be ran after a clean installation of Ubuntu.
 
 Dependencies:
 - OS: Ubuntu 24.04.3
+- Core Packages: DW-Spectrum RustDesk
 - Packages: i3 xorg xterm feh curl wget
 
 <br/>
