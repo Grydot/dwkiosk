@@ -4,9 +4,9 @@ set -e
 ### CONFIGURATION ###
 KIOSK_USER="kiosk"
 RUSTDESK_PASS="MySecretPassword"
-REPO_BASE="https://raw.githubusercontent.com/YourUser/YourRepo/main"
+REPO_BASE="https://raw.githubusercontent.com/Grydot/dwkiosk/main"
 DW_DEB="https://updates.digitalwatchdog.com/digitalwatchdog/40736/linux/dwspectrum-client-6.0.3.40736-linux_x64.deb"
-RUSTDESK_DEB="https://github.com/rustdesk/rustdesk/releases/download/1.3.1/rustdesk-1.3.1.deb"
+RUSTDESK_DEB="https://github.com/rustdesk/rustdesk/releases/download/1.4.1/rustdesk-1.4.1-x86_64.deb"
 
 echo "Starting Kiosk Setup..."
 
